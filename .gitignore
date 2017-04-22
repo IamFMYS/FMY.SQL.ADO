@@ -1,1 +1,6 @@
 FMY.SQL.ADO/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+*.dll
+FMY.SQL.ADO/bin/
+FMY.SQL.ADO/obj/Debug/FMY.SQL.ADO.csproj.FileListAbsolute.txt
+FMY.SQL.ADO/obj/Debug/FMY.SQL.ADO.csprojResolveAssemblyReference.cache
+FMY.SQL.ADO/obj/Debug/
