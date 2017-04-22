@@ -19,7 +19,9 @@ namespace FMY.SQL.ADO
         /// <returns>受影响行数</returns>
         public static int Excute(string cmdText, CommandType commandType, params SqlParameter[] parameters)
         {
-            int result = 0;
+            //test
+            int result = 0; 
+
             SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionStr"].ToString());
             try
             {
