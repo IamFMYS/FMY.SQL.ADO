@@ -10,6 +10,7 @@ namespace FMY.SQL.ADO
 {
     public class SQLHelper
     {
+        private static string connectionStr = ConfigurationManager.ConnectionStrings["ConnectionStr"].ToString();
         /// <summary>
         /// 执行sql语句
         /// </summary>
@@ -20,24 +21,20 @@ namespace FMY.SQL.ADO
         public static int Excute(string cmdText, CommandType commandType, params SqlParameter[] parameters)
         {
             //test
-            int result = 0; 
-
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionStr"].ToString());
-            try
+            int result = 0;
+            using (SqlConnection conn = new SqlConnection(connectionStr))
             {
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();//打开链接
-                SqlCommand cmd = new SqlCommand(cmdText, conn);//新建执行对象
-                cmd.CommandType = commandType;
-                if (parameters != null && parameters.Length > 0)
-                    cmd.Parameters.AddRange(parameters);
-                result = cmd.ExecuteNonQuery();//执行
-                return result;
+                using (SqlCommand cmd = new SqlCommand(cmdText, conn)) //新建执行对象
+                {
+                    cmd.CommandType = commandType;
+                    if (parameters != null && parameters.Length > 0)
+                        cmd.Parameters.AddRange(parameters);
+                    result = cmd.ExecuteNonQuery();//执行
+                    return result;
+                }
             }
-            catch (Exception ex)
-            { throw ex; }
-            finally
-            { conn.Close(); }
         }
         /// <summary>
         /// 查询数据集
@@ -49,26 +46,18 @@ namespace FMY.SQL.ADO
         public static DataTable Select(string cmdText, CommandType commandType, params SqlParameter[] parameters)
         {
             DataTable result = new DataTable();
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionStr"].ToString());
-            try
+            using (SqlConnection conn = new SqlConnection(connectionStr))
             {
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 conn.Open();
-                SqlCommand cmd = new SqlCommand(cmdText, conn);
-                SqlDataAdapter sda = new SqlDataAdapter(cmd);
-                DataSet ds = new DataSet();
-                sda.Fill(ds);
-                result = ds.Tables[0];
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                conn.Close();
+                using (SqlDataAdapter sda = new SqlDataAdapter(cmdText, conn))
+                {
+                    DataSet ds = new DataSet();
+                    sda.Fill(ds);
+                    result = ds.Tables[0];
+                    return result;
+                }
             }
         }
         /// <summary>
@@ -80,24 +69,17 @@ namespace FMY.SQL.ADO
         /// <returns>第一行第一列数据</returns>
         public static object SelectFirst(string cmdText, CommandType commandType, params SqlParameter[] parameters)
         {
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionStr"].ToString());
-            try
+            using (SqlConnection conn = new SqlConnection(connectionStr))
             {
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
-                SqlCommand cmd = new SqlCommand(cmdText, conn);
-                cmd.CommandType = commandType;
-                if (parameters != null && parameters.Length > 0)
-                    cmd.Parameters.AddRange(parameters);
-                return cmd.ExecuteScalar();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                conn.Close();
+                using (SqlCommand cmd = new SqlCommand(cmdText, conn))
+                {
+                    cmd.CommandType = commandType;
+                    if (parameters != null && parameters.Length > 0)
+                        cmd.Parameters.AddRange(parameters);
+                    return cmd.ExecuteScalar();
+                }                
             }
         }
 
